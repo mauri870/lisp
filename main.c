@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
     puts("Lispy Version 0.0.0");
     puts("Press Ctrl+c to exit");
-    while (1) {
+    while (e->run) {
         char *input = readline("lispy> ");
         add_history(input);
 
@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
         free(input);
     }
 
+    printf("Good bye!\n");
     mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
     lenv_del(e);
 }

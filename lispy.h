@@ -37,6 +37,7 @@ typedef lval *(*lbuiltin)(lenv*, lval*);
 
 struct lenv {
   int count;
+  int run;
   char **syms;
   lval **vals;
 };
@@ -97,6 +98,7 @@ lval *lval_builtin_len(lenv *, lval *);
 lval *lval_builtin_cons(lenv *, lval *);
 lval *lval_builtin_init(lenv *, lval *);
 lval *lval_builtin_def(lenv *, lval *);
+lval *lval_builtin_exit(lenv *, lval *);
 lval *lval_eval_sexpr(lenv *e, lval *v);
 lval *lval_eval(lenv *e, lval *v);
 

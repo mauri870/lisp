@@ -7,6 +7,7 @@
 
 lenv *lenv_new() {
     lenv *e = malloc(sizeof(lenv));
+    e->run = 1;
     e->count = 0;
     e->syms = NULL;
     e->vals = NULL;
@@ -77,6 +78,9 @@ void lenv_add_builtins(lenv *e) {
 
     // variable functions
     lenv_add_builtin(e, "def", lval_builtin_def);
+
+    // general functions
+    lenv_add_builtin(e, "exit", lval_builtin_exit);
 
     // arithmetic functions
     lenv_add_builtin(e, "+", lval_builtin_add);
@@ -414,6 +418,11 @@ lval *lval_builtin_def(lenv *e, lval *a) {
     }
 
     lval_del(a);
+    return lval_sexpr();
+}
+
+lval *lval_builtin_exit(lenv *e, lval *a) {
+    e->run = 0;
     return lval_sexpr();
 }
 
