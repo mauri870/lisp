@@ -6,7 +6,7 @@
 #include "mpc.h"
 
 enum { LVAL_NUM, LVAL_ERR };
-enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+typedef enum lerr_e { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM } lerr_e;
 
 typedef struct {
     int type;
@@ -21,7 +21,7 @@ lval lval_num(long x) {
     return v;
 }
 
-lval lval_err(int x) {
+lval lval_err(lerr_e x) {
     lval v;
     v.type = LVAL_ERR;
     v.err = x;
