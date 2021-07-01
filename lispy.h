@@ -14,7 +14,7 @@
 #define LASSERT_TYPE(func, args, index, expect) \
     LASSERT(args, args->cell[index]->type == expect, \
         "Function '%s' passed incorrect type for argument %i. Got %s, Expected %s.", \
-        func, index, ltype_name(args->cell[index]->type), ltype_name(expect))
+        func, index, lval_type_name(args->cell[index]->type), lval_type_name(expect))
 
 #define LASSERT_NUM(func, args, num) \
     LASSERT(args, args->count == num, \
@@ -36,22 +36,30 @@ typedef enum lerr_e { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM } lerr_e;
 typedef lval *(*lbuiltin)(lenv*, lval*);
 
 struct lenv {
-  int count;
-  int run;
-  char **syms;
-  lval **vals;
+    lenv *par;
+    int count;
+    int run;
+    char **syms;
+    lval **vals;
 };
 
 struct lval {
     int type;
-    // FIXME: Can we use a union here?
+    
+    // Basic types
     long num;
     char *err;
     char *sym;
-    lbuiltin fun;
-    
+
+    // Func
+    lbuiltin builtin;
+    lenv* env;
+    lval *formals;
+    lval *body;
+
+    // Expr
     int count;
-    struct lval** cell;
+    lval** cell;
 };
 
 lenv *lenv_new(void);
@@ -60,6 +68,8 @@ lval *lenv_get(lenv *e, lval *k);
 void lenv_put(lenv *e, lval *k, lval *v);
 void lenv_add_builtin(lenv *e, char *name, lbuiltin fun);
 void lenv_add_builtins(lenv *e);
+lenv *lenv_copy(lenv *);
+void lenv_def(lenv *, lval *k, lval *v);
 
 lval *lval_num(long x);
 lval *lval_err(char *fmt, ...);
@@ -67,6 +77,7 @@ lval *lval_sym(char *s);
 lval *lval_sexpr(void);
 lval *lval_qexpr(void);
 lval *lval_fun(lbuiltin);
+lval *lval_lambda(lval *formals, lval *body);
 
 const char *lval_type_name(int);
 void lval_del(lval *v);
@@ -99,7 +110,10 @@ lval *lval_builtin_cons(lenv *, lval *);
 lval *lval_builtin_init(lenv *, lval *);
 lval *lval_builtin_def(lenv *, lval *);
 lval *lval_builtin_exit(lenv *, lval *);
+lval *lval_builtin_lambda(lenv *, lval *);
+lval *lval_builtin_var(lenv *, lval *a, char *func);
 lval *lval_eval_sexpr(lenv *e, lval *v);
 lval *lval_eval(lenv *e, lval *v);
+lval *lval_call(lenv *e, lval *f, lval *a);
 
 #endif
