@@ -45,6 +45,7 @@ lval *lval_builtin_eval(lval *a);
 lval *lval_builtin_join(lval *a);
 lval *lval_builtin_len(lval *a);
 lval *lval_builtin_cons(lval *a);
+lval *lval_builtin_init(lval *a);
 lval *lval_builtin(lval *a, char *func);
 lval *lval_eval_sexpr(lval *v);
 lval *lval_eval(lval *v);

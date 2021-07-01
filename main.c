@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     mpca_lang(MPCA_LANG_DEFAULT, 
     " \
         number : /-?[0-9]+/ ; \
-        symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | \"len\" | \"cons\" | '+' | '-' | '*' | '/' | '%' | '^' ; \
+        symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | \"len\" | \"cons\" | \"init\" | '+' | '-' | '*' | '/' | '%' | '^' ; \
         sexpr : '(' <expr>* ')' ; \
         qexpr : '{' <expr>* '}' ; \
         expr : <number> | <symbol> | <sexpr> | <qexpr> ; \

@@ -272,6 +272,16 @@ lval *lval_builtin_cons(lval *a) {
     return x;
 }
 
+lval *lval_builtin_init(lval *a) {
+    LASSERT(a, a->count == 1, "Function 'init' requires one parameter!");
+    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'init' passed incorrect type!");
+    LASSERT(a, a->cell[0]->count != 0, "Function 'init' passed {}!");
+
+    lval* v = lval_take(a, 0);
+    lval_del(lval_pop(v, v->count - 1));
+    return v;
+}
+
 lval *lval_builtin(lval *a, char *func) {
     if (strcmp("list", func) == 0) { return lval_builtin_list(a); }
     if (strcmp("head", func) == 0) { return lval_builtin_head(a); }
@@ -280,6 +290,7 @@ lval *lval_builtin(lval *a, char *func) {
     if (strcmp("eval", func) == 0) { return lval_builtin_eval(a); }
     if (strcmp("len", func) == 0) { return lval_builtin_len(a); }
     if (strcmp("cons", func) == 0) { return lval_builtin_cons(a); }
+    if (strcmp("init", func) == 0) { return lval_builtin_init(a); }
     if (strstr("+-/*\%^", func)) { return lval_builtin_op(a, func); }
 
     lval_del(a);
