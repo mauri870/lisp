@@ -96,6 +96,12 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "/", lval_builtin_div);
     lenv_add_builtin(e, "%", lval_builtin_mod);
     lenv_add_builtin(e, "^", lval_builtin_exp);
+
+    // conditionals
+    lenv_add_builtin(e, ">", lval_builtin_gt);
+    lenv_add_builtin(e, ">=", lval_builtin_ge);
+    lenv_add_builtin(e, "<", lval_builtin_lt);
+    lenv_add_builtin(e, "<=", lval_builtin_le);
 }
 
 lenv *lenv_copy(lenv *e) {
@@ -495,6 +501,48 @@ lval *lval_builtin_var(lenv *e, lval *a, char *func) {
 
     lval_del(a);
     return lval_sexpr();
+}
+
+lval *lval_builtin_gt(lenv *e, lval *a) {
+    return lval_builtin_ord(e, a, ">");
+}
+
+lval *lval_builtin_lt(lenv *e, lval *a) {
+    return lval_builtin_ord(e, a, "<");
+}
+
+lval *lval_builtin_ge(lenv *e, lval *a) {
+    return lval_builtin_ord(e, a, ">=");
+}
+
+lval *lval_builtin_le(lenv *e, lval *a) {
+    return lval_builtin_ord(e, a, "<=");
+}
+
+lval *lval_builtin_ord(lenv *e, lval *a, char *op) {
+    LASSERT_NUM(op, a, 2);
+    LASSERT_TYPE(op, a, 0, LVAL_NUM);
+    LASSERT_TYPE(op, a, 1, LVAL_NUM);
+
+    int r;
+    if (strcmp(op, ">") == 0) {
+        r = (a->cell[0]->num > a->cell[1]->num);
+    }
+
+    if (strcmp(op, "<") == 0) {
+        r = (a->cell[0]->num < a->cell[1]->num);
+    }
+
+    if (strcmp(op, ">=") == 0) {
+        r = (a->cell[0]->num >= a->cell[1]->num);
+    }
+
+    if (strcmp(op, "<=") == 0) {
+        r = (a->cell[0]->num <= a->cell[1]->num);
+    }
+
+    lval_del(a);
+    return lval_num(r);
 }
 
 lval *lval_builtin_exit(lenv *e, lval *a) {
