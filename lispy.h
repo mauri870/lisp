@@ -7,7 +7,6 @@
 #define LASSERT(args, cond, err) \
   if (!(cond)) { lval_del(args); return lval_err(err); } 
 
-
 enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR, LVAL_QEXPR };
 typedef enum lerr_e { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM } lerr_e;
 
@@ -45,6 +44,7 @@ lval *lval_builtin_list(lval *a);
 lval *lval_builtin_eval(lval *a);
 lval *lval_builtin_join(lval *a);
 lval *lval_builtin_len(lval *a);
+lval *lval_builtin_cons(lval *a);
 lval *lval_builtin(lval *a, char *func);
 lval *lval_eval_sexpr(lval *v);
 lval *lval_eval(lval *v);

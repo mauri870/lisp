@@ -96,8 +96,6 @@ lval *lval_read(mpc_ast_t *t) {
     return x;
 }
 
-lval *lval_pop(lval *v, int i);
-
 lval *lval_join(lval *x, lval *y) {
     while (y->count) {
         x = lval_add(x, lval_pop(y, 0));
@@ -106,8 +104,6 @@ lval *lval_join(lval *x, lval *y) {
     lval_del(y);
     return x;
 }
-
-void lval_expr_print(lval *v, char open, char close);
 
 void lval_print(lval *v) {
     switch (v->type) {
@@ -132,8 +128,6 @@ void lval_expr_print(lval *v, char open, char close) {
 }
 
 void lval_println(lval *v ) { lval_print(v); putchar('\n'); }
-
-lval *lval_eval(lval *v);
 
 lval *lval_pop(lval *v, int i)  {
     lval *x = v->cell[i];
@@ -264,6 +258,20 @@ lval *lval_builtin_len(lval *a) {
     return x;
 }
 
+lval *lval_builtin_cons(lval *a) {
+    LASSERT(a, a->count == 2, "Function 'cons' requires two parameters!");
+    LASSERT(a, a->cell[1]->type == LVAL_QEXPR, "Function 'cons' passed incorrect type!");
+
+    lval *x = lval_qexpr();
+    lval_add(x, lval_pop(a, 0));
+
+    while (a->count) {
+        x = lval_join(x, lval_pop(a, 0));
+    }
+    lval_del(a);
+    return x;
+}
+
 lval *lval_builtin(lval *a, char *func) {
     if (strcmp("list", func) == 0) { return lval_builtin_list(a); }
     if (strcmp("head", func) == 0) { return lval_builtin_head(a); }
@@ -271,6 +279,7 @@ lval *lval_builtin(lval *a, char *func) {
     if (strcmp("join", func) == 0) { return lval_builtin_join(a); }
     if (strcmp("eval", func) == 0) { return lval_builtin_eval(a); }
     if (strcmp("len", func) == 0) { return lval_builtin_len(a); }
+    if (strcmp("cons", func) == 0) { return lval_builtin_cons(a); }
     if (strstr("+-/*\%^", func)) { return lval_builtin_op(a, func); }
 
     lval_del(a);
