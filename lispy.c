@@ -10,8 +10,10 @@ typedef enum lerr_e { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM } lerr_e;
 
 typedef struct {
     int type;
-    long num;
-    int err;
+    union {
+        long num;
+        int err;
+    };
 } lval;
 
 lval lval_num(long x) {
