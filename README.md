@@ -1,6 +1,4 @@
-# Build your own Lisp
-
-Code for [buildyourownlisp.com](http://buildyourownlisp.com/).
+# A simple lisp
 
 ```txt
 make
