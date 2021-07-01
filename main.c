@@ -16,13 +16,16 @@ int main(int argc, char **argv) {
     mpca_lang(MPCA_LANG_DEFAULT, 
     " \
         number : /-?[0-9]+/ ; \
-        symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | \"len\" | \"cons\" | \"init\" | '+' | '-' | '*' | '/' | '%' | '^' ; \
+        symbol : /[a-zA-Z0-9_+\\-*%^\\/\\\\=<>!&]+/ ; \
         sexpr : '(' <expr>* ')' ; \
         qexpr : '{' <expr>* '}' ; \
         expr : <number> | <symbol> | <sexpr> | <qexpr> ; \
         lispy : /^/ <expr>* /$/ ; \
     ", 
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
+
+    lenv *e = lenv_new();
+    lenv_add_builtins(e);
 
     puts("Lispy Version 0.0.0");
     puts("Press Ctrl+c to exit");
@@ -34,7 +37,7 @@ int main(int argc, char **argv) {
         if (mpc_parse("<stdin>", input, Lispy, &r)) {
             // mpc_ast_print(r.output);
 
-            lval *x = lval_eval(lval_read(r.output));
+            lval *x = lval_eval(e, lval_read(r.output));
             lval_println(x);
             lval_del(x);
             mpc_ast_delete(r.output);
@@ -47,4 +50,5 @@ int main(int argc, char **argv) {
     }
 
     mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
+    lenv_del(e);
 }
