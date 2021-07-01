@@ -111,6 +111,7 @@ lval *lval_builtin_init(lenv *, lval *);
 lval *lval_builtin_def(lenv *, lval *);
 lval *lval_builtin_exit(lenv *, lval *);
 lval *lval_builtin_lambda(lenv *, lval *);
+lval *lval_builtin_fun(lenv *, lval *);
 lval *lval_builtin_var(lenv *, lval *a, char *func);
 lval *lval_eval_sexpr(lenv *e, lval *v);
 lval *lval_eval(lenv *e, lval *v);

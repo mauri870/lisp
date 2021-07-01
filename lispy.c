@@ -81,6 +81,7 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "cons", lval_builtin_cons);
     lenv_add_builtin(e, "init", lval_builtin_init);
     lenv_add_builtin(e, "\\", lval_builtin_lambda);
+    lenv_add_builtin(e, "fun", lval_builtin_fun);
 
     // variable functions
     lenv_add_builtin(e, "def", lval_builtin_def);
@@ -517,6 +518,31 @@ lval *lval_builtin_lambda(lenv *e, lval *a) {
     lval_del(a);
 
     return lval_lambda(formals, body);
+}
+
+lval *lval_builtin_fun(lenv *e, lval *a) {
+    LASSERT_NUM("fun", a, 2);
+    LASSERT_TYPE("fun", a, 0, LVAL_QEXPR);
+    LASSERT_TYPE("fun", a, 1, LVAL_QEXPR);
+
+    for (int i = 0; i < a->cell[0]->count; i++) {
+        LASSERT(a, (a->cell[0]->cell[i]->type == LVAL_SYM), 
+            "Cannot define non symbol. Got '%s', Expected '%s",
+            lval_type_name(a->cell[0]->cell[i]->type), lval_type_name(LVAL_SYM))
+        // FIXME: should this fail if symbol is already a builtin?
+    }
+
+    lval *formals = lval_pop(a, 0);
+    lval *sym = lval_pop(formals, 0);
+    lval *body = lval_pop(a, 0);
+
+    lval *func_name = lval_add(lval_qexpr(), sym);
+
+    lval *def = lval_add(lval_qexpr(), func_name);
+    lval_add(def, lval_lambda(formals, body));
+
+    lval_del(a);
+    return lval_builtin_def(e, def);
 }
 
 lval *lval_builtin_len(lenv *e, lval *a) {
