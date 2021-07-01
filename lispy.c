@@ -271,12 +271,21 @@ lval *lval_builtin_join(lval *a) {
     return x;
 }
 
+lval *lval_builtin_len(lval *a) {
+    LASSERT(a, a->count == 1, "Function 'len' only accepts one parameter!");
+    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'len' passed incorrect type!");
+
+    lval *x = lval_num(a->cell[0]->count);
+    return x;
+}
+
 lval *lval_builtin(lval *a, char *func) {
     if (strcmp("list", func) == 0) { return lval_builtin_list(a); }
     if (strcmp("head", func) == 0) { return lval_builtin_head(a); }
     if (strcmp("tail", func) == 0) { return lval_builtin_tail(a); }
     if (strcmp("join", func) == 0) { return lval_builtin_join(a); }
     if (strcmp("eval", func) == 0) { return lval_builtin_eval(a); }
+    if (strcmp("len", func) == 0) { return lval_builtin_len(a); }
     if (strstr("+-/*\%^", func)) { return lval_builtin_op(a, func); }
 
     lval_del(a);
@@ -330,7 +339,7 @@ int main(int argc, char **argv) {
     mpca_lang(MPCA_LANG_DEFAULT, 
     " \
         number : /-?[0-9]+/ ; \
-        symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | '+' | '-' | '*' | '/' | '%' | '^' ; \
+        symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | \"len\" | '+' | '-' | '*' | '/' | '%' | '^' ; \
         sexpr : '(' <expr>* ')' ; \
         qexpr : '{' <expr>* '}' ; \
         expr : <number> | <symbol> | <sexpr> | <qexpr> ; \
