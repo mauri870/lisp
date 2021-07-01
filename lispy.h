@@ -5,7 +5,11 @@
 #include "mpc.h"
 
 #define LASSERT(args, cond, fmt, ...) \
-    if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }
+    if (!(cond)) { \
+      lval* err = lval_err(fmt, ##__VA_ARGS__); \
+      lval_del(args); \
+      return err; \
+    }
 
 #define LASSERT_TYPE(func, args, index, expect) \
     LASSERT(args, args->cell[index]->type == expect, \
@@ -57,12 +61,13 @@ void lenv_add_builtin(lenv *e, char *name, lbuiltin fun);
 void lenv_add_builtins(lenv *e);
 
 lval *lval_num(long x);
-lval *lval_err(char *m);
+lval *lval_err(char *fmt, ...);
 lval *lval_sym(char *s);
 lval *lval_sexpr(void);
 lval *lval_qexpr(void);
 lval *lval_fun(lbuiltin);
 
+const char *lval_type_name(int);
 void lval_del(lval *v);
 lval *lval_read_num(mpc_ast_t *t);
 lval *lval_add(lval *v, lval *x);

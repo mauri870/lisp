@@ -31,7 +31,7 @@ lval* lenv_get(lenv* e, lval* k) {
         }
     }
 
-    return lval_err("unbound symbol!");
+    return lval_err("unbound symbol'%s'!", k->sym);
 }
 
 void lenv_put(lenv* e, lval* k, lval* v) {
@@ -94,14 +94,21 @@ lval *lval_num(long x) {
     return v;
 }
 
-lval *lval_err(char *m) {
+lval *lval_err(char *fmt, ...) {
     lval *v = malloc(sizeof(lval));
     v->type = LVAL_ERR;
-    v->err = malloc(strlen(m) + 1);
-    strcpy(v->err, m);
+
+    va_list va;
+    va_start(va, fmt);
+
+    v->err = malloc(512);
+
+    vsnprintf(v->err, 511, fmt, va);
+    v->err = realloc(v->err, strlen(v->err)+1);
+
+    va_end(va);
     return v;
 }
-
 
 lval *lval_sym(char *s) {
     lval *v = malloc(sizeof(lval));
@@ -132,6 +139,18 @@ lval *lval_fun(lbuiltin fun) {
     v->type = LVAL_FUN;
     v->fun = fun;
     return v;
+}
+
+const char *lval_type_name(int t) {
+    switch (t) {
+        case LVAL_FUN: return "Function";
+        case LVAL_NUM: return "Number";
+        case LVAL_ERR: return "Error";
+        case LVAL_SYM: return "Symbol";
+        case LVAL_QEXPR: return "Q-Expression";
+        case LVAL_SEXPR: return "S-Expression";
+        default: return "Unknown";
+    }
 }
 
 void lval_del(lval *v) {
@@ -274,7 +293,8 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
     for (int i = 0; i < a->count; i++) {
         if (a->cell[i]->type != LVAL_NUM) {
             lval_del(a);
-            return lval_err("Cannot operate on non-number!");
+            return lval_err("Function '%s' passed incorrect type for argument %i. "
+            "Got %s, Expected %s", op, i, lval_type_name(a->cell[i]->type), lval_type_name(LVAL_NUM));
         }
     }
 
@@ -313,8 +333,12 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
 
 lval* lval_builtin_head(lenv *e, lval* a) {
     // check error conditions
-    LASSERT(a, a->count == 1, "Function 'head' passed too many arguments!");
-    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'head' passed incorrect types!");
+    LASSERT(a, a->count == 1, 
+        "Function 'head' passed too many arguments!"
+        "Got %i, Expected %i", a->count, 1);
+    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, 
+        "Function 'head' passed incorrect types!"
+        "Got %s, Expected %s", lval_type_name(a->cell[0]->type), lval_type_name(LVAL_QEXPR));
     LASSERT(a, a->cell[0]->count != 0, "Function 'head' passed {}!");
 
     // otherwise take first argument
