@@ -90,6 +90,8 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "\\", lval_builtin_lambda);
     lenv_add_builtin(e, "fun", lval_builtin_fun);
     lenv_add_builtin(e, "load", lval_builtin_load);
+    lenv_add_builtin(e, "print", lval_builtin_print);
+    lenv_add_builtin(e, "error", lval_builtin_error);
 
     // arithmetic functions
     lenv_add_builtin(e, "+", lval_builtin_add);
@@ -642,6 +644,26 @@ lval *lval_builtin_load(lenv *e, lval *a) {
 
         return err;
     }
+}
+
+lval *lval_builtin_print(lenv *e, lval *a) {
+    for (int i = 0; i < a->count; i++) {
+        lval_print(a->cell[i]);
+        putchar(' ');
+    }
+
+    putchar('\n');
+    lval_del(a);
+    return lval_sexpr();
+}
+
+lval *lval_builtin_error(lenv *e, lval *a) {
+    LASSERT_NUM("error", a, 1);
+    LASSERT_TYPE("error", a, 0, LVAL_STR);
+
+    lval *x = lval_err(a->cell[0]->str);
+    lval_del(a);
+    return x;
 }
 
 lval *lval_builtin_cmp(lenv *e, lval *a, char *op) {

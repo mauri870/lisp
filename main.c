@@ -33,29 +33,42 @@ int main(int argc, char **argv) {
     lenv *e = lenv_new();
     lenv_add_builtins(e);
 
-    puts("Lispy Version 0.0.0");
-    puts("Press Ctrl+c to exit");
-    while (e->run) {
-        char *input = readline("lispy> ");
-        add_history(input);
+    if (argc == 1) {
+        puts("Lispy Version 0.0.0");
+        puts("Press Ctrl+c to exit");
+        while (e->run) {
+            char *input = readline("lispy> ");
+            add_history(input);
 
-        mpc_result_t r;
-        if (mpc_parse("<stdin>", input, Lispy, &r)) {
-            // mpc_ast_print(r.output);
+            mpc_result_t r;
+            if (mpc_parse("<stdin>", input, Lispy, &r)) {
+                // mpc_ast_print(r.output);
 
-            lval *x = lval_eval(e, lval_read(r.output));
-            lval_println(x);
-            lval_del(x);
-            mpc_ast_delete(r.output);
-        } else {
-            mpc_err_print(r.error);
-            mpc_err_delete(r.error);
+                lval *x = lval_eval(e, lval_read(r.output));
+                lval_println(x);
+                lval_del(x);
+                mpc_ast_delete(r.output);
+            } else {
+                mpc_err_print(r.error);
+                mpc_err_delete(r.error);
+            }
+
+            free(input);
         }
 
-        free(input);
+        printf("Good bye!\n");
     }
 
-    printf("Good bye!\n");
-    mpc_cleanup(8, Number, String, Comment,  Symbol, Sexpr, Qexpr, Expr, Lispy);
+    if (argc >= 2) {
+        for (int i = 1; i < argc; i++) {
+            lval *args = lval_add(lval_sexpr(), lval_str(argv[i]));
+            lval *x = lval_builtin_load(e, args);
+
+            if (x->type == LVAL_ERR) { lval_println(x); }
+            lval_del(x);
+        }
+    }
+
     lenv_del(e);
+    mpc_cleanup(8, Number, String, Comment,  Symbol, Sexpr, Qexpr, Expr, Lispy);
 }

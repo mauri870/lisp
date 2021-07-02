@@ -120,6 +120,8 @@ lval *lval_builtin_put(lenv *, lval *);
 lval *lval_builtin_exit(lenv *, lval *);
 lval *lval_builtin_lambda(lenv *, lval *);
 lval *lval_builtin_fun(lenv *, lval *);
+lval *lval_builtin_print(lenv *, lval *);
+lval *lval_builtin_error(lenv *, lval *);
 lval *lval_builtin_var(lenv *, lval *, char *func);
 lval *lval_builtin_gt(lenv *, lval *);
 lval *lval_builtin_lt(lenv *, lval *);
