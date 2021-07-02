@@ -80,14 +80,15 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "len", lval_builtin_len);
     lenv_add_builtin(e, "cons", lval_builtin_cons);
     lenv_add_builtin(e, "init", lval_builtin_init);
-    lenv_add_builtin(e, "\\", lval_builtin_lambda);
-    lenv_add_builtin(e, "fun", lval_builtin_fun);
 
     // variable functions
     lenv_add_builtin(e, "def", lval_builtin_def);
 
     // general functions
     lenv_add_builtin(e, "exit", lval_builtin_exit);
+    lenv_add_builtin(e, "\\", lval_builtin_lambda);
+    lenv_add_builtin(e, "fun", lval_builtin_fun);
+    lenv_add_builtin(e, "load", lval_builtin_load);
 
     // arithmetic functions
     lenv_add_builtin(e, "+", lval_builtin_add);
@@ -618,6 +619,38 @@ lval *lval_builtin_if(lenv *e, lval *a) {
 
     lval_del(a);
     return x;
+}
+
+lval *lval_builtin_load(lenv *e, lval *a) {
+    LASSERT_NUM("load", a, 1);
+    LASSERT_TYPE("load", a, 0, LVAL_STR);
+    
+    mpc_result_t r;
+    if (mpc_parse_contents(a->cell[0]->str, Lispy, &r)) {
+        // read
+        lval* expr = lval_read(r.output);
+        mpc_ast_delete(r.output);
+ 
+        while (expr->count) {
+            lval* x = lval_eval(e, lval_pop(expr, 0));
+            if (x->type == LVAL_ERR) { lval_println(x); }
+            lval_del(x);
+        }
+
+        lval_del(expr);
+        lval_del(a);
+
+        return lval_sexpr();
+    } else {
+        char* err_msg = mpc_err_string(r.error);
+        mpc_err_delete(r.error);
+
+        lval* err = lval_err("Could not load Library %s", err_msg);
+        free(err_msg);
+        lval_del(a);
+
+        return err;
+    }
 }
 
 lval *lval_builtin_cmp(lenv *e, lval *a, char *op) {

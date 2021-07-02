@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include "mpc.h"
 
+// FIXME: How to integrate parser into the environment?
+extern mpc_parser_t *Lispy;
+
 #define LASSERT(args, cond, fmt, ...) \
     if (!(cond)) { \
       lval* err = lval_err(fmt, ##__VA_ARGS__); \
@@ -130,6 +133,7 @@ lval *lval_builtin_and(lenv *, lval *);
 lval *lval_builtin_not(lenv *, lval *);
 lval *lval_builtin_log(lenv *, lval *, char *);
 lval *lval_builtin_if(lenv *, lval *);
+lval *lval_builtin_load(lenv *, lval *);
 lval *lval_eval_sexpr(lenv *e, lval *v);
 lval *lval_eval(lenv *e, lval *v);
 lval *lval_call(lenv *e, lval *f, lval *a);
