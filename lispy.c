@@ -107,6 +107,11 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "if", lval_builtin_if);
     lenv_add_builtin(e, "==", lval_builtin_eq);
     lenv_add_builtin(e, "!=", lval_builtin_neq);
+
+    // logical functions
+    lenv_add_builtin(e, "&&", lval_builtin_and);
+    lenv_add_builtin(e, "||", lval_builtin_or);
+    lenv_add_builtin(e, "!", lval_builtin_not);
 }
 
 lenv *lenv_copy(lenv *e) {
@@ -618,6 +623,38 @@ int lval_eq(lval *x, lval *y) {
     }
 
     return 0;
+}
+
+lval *lval_builtin_or(lenv *e, lval *a) {
+    return lval_builtin_log(e, a, "||");
+}
+
+lval *lval_builtin_and(lenv *e, lval *a) {
+    return lval_builtin_log(e, a, "&&");
+}
+
+lval *lval_builtin_not(lenv *e, lval *a) {
+    return lval_builtin_log(e, a, "!");
+}
+
+lval *lval_builtin_log(lenv *e, lval *a, char *op) {
+    // LASSERT_NUM(op, a, 2);
+    // LASSERT_TYPE(op, a, 0, LVAL_NUM);
+    // LASSERT_TYPE(op, a, 1, LVAL_NUM);
+
+    int r;
+    if (strcmp(op, "&&") == 0) {
+        r = (a->cell[0]->num && a->cell[1]->num);
+    }
+    if (strcmp(op, "||") == 0) {
+        r = (a->cell[0]->num || a->cell[1]->num);
+    }
+    if (strcmp(op, "!") == 0) {
+        r = !a->cell[0]->num;
+    }
+
+    lval_del(a);
+    return lval_num(r);
 }
 
 lval *lval_builtin_exit(lenv *e, lval *a) {
