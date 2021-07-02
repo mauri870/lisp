@@ -33,6 +33,13 @@ int main(int argc, char **argv) {
     lenv *e = lenv_new();
     lenv_add_builtins(e);
 
+    // prelude
+    lval *args = lval_add(lval_sexpr(), lval_str("./prelude.lisp"));
+    lval *x = lval_builtin_load(e, args);
+    if (x->type == LVAL_ERR) { lval_println(x); }
+    lval_del(x);
+
+    // REPL
     if (argc == 1) {
         puts("Lispy Version 0.0.0");
         puts("Press Ctrl+c to exit");
