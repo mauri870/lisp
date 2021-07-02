@@ -286,6 +286,7 @@ lval *lval_read(mpc_ast_t *t) {
     if (strstr(t->tag, "qexpr")) { x = lval_qexpr(); }
 
     for (int i = 0; i < t->children_num; i++) {
+        if (strstr(t->children[i]->tag, "comment")) { continue; }
         if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
         if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
         if (strcmp(t->children[i]->contents, "{") == 0) { continue; }
