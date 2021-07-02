@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -Wall
+CFLAGS=-std=c99 -Wall -g
 LDFLAGS?=-ledit -lm
 SOURCES=main.c lispy.c readline.c mpc.c
 

@@ -83,6 +83,7 @@ void lenv_add_builtins(lenv *e) {
 
     // variable functions
     lenv_add_builtin(e, "def", lval_builtin_def);
+    lenv_add_builtin(e, "=", lval_builtin_put);
 
     // general functions
     lenv_add_builtin(e, "exit", lval_builtin_exit);
@@ -417,11 +418,7 @@ lval *lval_take(lval *v, int i) {
 lval *lval_builtin_op(lenv *e, lval* a, char *op) {
     // ensure all args are numbers
     for (int i = 0; i < a->count; i++) {
-        if (a->cell[i]->type != LVAL_NUM) {
-            lval_del(a);
-            return lval_err("Function '%s' passed incorrect type for argument %i. "
-            "Got %s, Expected %s", op, i, lval_type_name(a->cell[i]->type), lval_type_name(LVAL_NUM));
-        }
+        LASSERT_TYPE(op, a, i, LVAL_NUM);
     }
 
     // pop the first element
