@@ -1,6 +1,5 @@
-CC=gcc
 CFLAGS=-std=c99 -Wall
-LDFLAGS=-ledit -lm
+LDFLAGS?=-ledit -lm
 SOURCES=main.c lispy.c readline.c mpc.c
 
 all: lispy
