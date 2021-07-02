@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__EMSCRIPTEN__)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
