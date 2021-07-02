@@ -458,14 +458,9 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
 }
 
 lval* lval_builtin_head(lenv *e, lval* a) {
-    // check error conditions
-    LASSERT(a, a->count == 1, 
-        "Function 'head' passed too many arguments!"
-        "Got %i, Expected %i", a->count, 1);
-    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, 
-        "Function 'head' passed incorrect types!"
-        "Got %s, Expected %s", lval_type_name(a->cell[0]->type), lval_type_name(LVAL_QEXPR));
-    LASSERT(a, a->cell[0]->count != 0, "Function 'head' passed {}!");
+    LASSERT_NUM("head", a, 1);
+    LASSERT_TYPE("head", a, 0, LVAL_QEXPR);
+    LASSERT_NOT_EMPTY("head", a, 0);
 
     // otherwise take first argument
     lval* v = lval_take(a, 0);
@@ -476,10 +471,9 @@ lval* lval_builtin_head(lenv *e, lval* a) {
 }
 
 lval* lval_builtin_tail(lenv *e, lval* a) {
-    // check error conditions
-    LASSERT(a, a->count == 1, "Function 'tail' passed too many arguments!");
-    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'tail' passed incorrect types!");
-    LASSERT(a, a->cell[0]->count != 0, "Function 'tail' passed {}!");
+    LASSERT_NUM("tail", a, 1);
+    LASSERT_TYPE("tail", a, 0, LVAL_QEXPR);
+    LASSERT_NOT_EMPTY("tail", a, 0);
 
     // take first argument
     lval* v = lval_take(a, 0);
@@ -495,8 +489,8 @@ lval *lval_builtin_list(lenv *e, lval *a) {
 }
 
 lval *lval_builtin_eval(lenv *e, lval *a) {
-    LASSERT(a, a->count == 1, "Function 'eval' passed too many arguments");
-    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'eval' passed incorrect type!");
+    LASSERT_NUM("eval", a, 1);
+    LASSERT_TYPE("eval", a, 0, LVAL_QEXPR);
 
     lval *x = lval_take(a, 0);
     x->type = LVAL_SEXPR;
