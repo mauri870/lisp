@@ -121,6 +121,7 @@ lval *lval_builtin_ord(lenv *, lval *, char *op);
 lval *lval_builtin_cmp(lenv *, lval *, char *op);
 lval *lval_builtin_eq(lenv *, lval *);
 lval *lval_builtin_neq(lenv *, lval *);
+lval *lval_builtin_if(lenv *, lval *);
 lval *lval_eval_sexpr(lenv *e, lval *v);
 lval *lval_eval(lenv *e, lval *v);
 lval *lval_call(lenv *e, lval *f, lval *a);
