@@ -97,11 +97,15 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "%", lval_builtin_mod);
     lenv_add_builtin(e, "^", lval_builtin_exp);
 
-    // conditionals
+    // conditional functions
     lenv_add_builtin(e, ">", lval_builtin_gt);
     lenv_add_builtin(e, ">=", lval_builtin_ge);
     lenv_add_builtin(e, "<", lval_builtin_lt);
     lenv_add_builtin(e, "<=", lval_builtin_le);
+
+    // comparison functions
+    lenv_add_builtin(e, "==", lval_builtin_eq);
+    lenv_add_builtin(e, "!=", lval_builtin_neq);
 }
 
 lenv *lenv_copy(lenv *e) {
@@ -543,6 +547,56 @@ lval *lval_builtin_ord(lenv *e, lval *a, char *op) {
 
     lval_del(a);
     return lval_num(r);
+}
+
+lval *lval_builtin_eq(lenv *e, lval *a) {
+    return lval_builtin_cmp(e, a, "==");
+}
+
+lval *lval_builtin_neq(lenv *e, lval *a) {
+    return lval_builtin_cmp(e, a, "!=");
+}
+
+lval *lval_builtin_cmp(lenv *e, lval *a, char *op) {
+    LASSERT_NUM(op, a, 2);
+
+    int r;
+    if (strcmp(op, "==") == 0) {
+        r = lval_eq(a->cell[0], a->cell[1]);
+    }
+
+    if (strcmp(op, "!=") == 0) {
+        r = !lval_eq(a->cell[0], a->cell[1]);
+    }
+
+    lval_del(a);
+    return lval_num(r);
+}
+
+int lval_eq(lval *x, lval *y) {
+    if (x->type != y->type) { return 0;}
+
+    switch (x->type) {
+        case LVAL_NUM: return (x->num == y->num);
+        case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
+        case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
+        case LVAL_FUN:
+            if (x->builtin) {
+                return (x->builtin == y->builtin);
+            } else {
+                return lval_eq(x->formals, y->formals) && lval_eq(x->body, y->body);
+            }
+        case LVAL_QEXPR:
+        case LVAL_SEXPR:
+            if (x->count != y->count) { return 0; }
+            for (int i = 0; i < x->count; i++) {
+                // FIXME: can we just return lval_eq without the if?
+                if (!lval_eq(x->cell[i], y->cell[i])) { return 0;}
+            }
+            return 1;
+    }
+
+    return 0;
 }
 
 lval *lval_builtin_exit(lenv *e, lval *a) {
