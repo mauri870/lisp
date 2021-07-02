@@ -567,13 +567,12 @@ lval *lval_builtin_if(lenv *e, lval *a) {
     a->cell[1]->type = LVAL_SEXPR;
     a->cell[2]->type = LVAL_SEXPR;
 
-    lval *x = lval_pop(a, 1);
-    if (!a->cell[0]->num) {
-        lval_del(x);
-        x = lval_pop(a, 1);
-    } 
-
-    x = lval_eval(e, x);
+    lval *x;
+    if (a->cell[0]->num) {
+        x = lval_eval(e, lval_pop(a, 1));
+    } else {
+        x = lval_eval(e, lval_pop(a, 2));
+    }
 
     lval_del(a);
     return x;
@@ -623,6 +622,7 @@ int lval_eq(lval *x, lval *y) {
 
 lval *lval_builtin_exit(lenv *e, lval *a) {
     e->run = 0;
+    lval_del(a);
     return lval_sexpr();
 }
 
