@@ -638,9 +638,9 @@ lval *lval_builtin_not(lenv *e, lval *a) {
 }
 
 lval *lval_builtin_log(lenv *e, lval *a, char *op) {
-    // LASSERT_NUM(op, a, 2);
-    // LASSERT_TYPE(op, a, 0, LVAL_NUM);
-    // LASSERT_TYPE(op, a, 1, LVAL_NUM);
+    LASSERT_NUM(op, a, (strcmp(op, "!") == 0 ? 1 : 2));
+    LASSERT_TYPE(op, a, 0, LVAL_NUM);
+    LASSERT_TYPE(op, a, 1, LVAL_NUM);
 
     int r;
     if (strcmp(op, "&&") == 0) {
