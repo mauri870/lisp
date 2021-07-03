@@ -48,15 +48,16 @@ struct lenv {
 
 struct lval {
     int type;
-    
-    // Basic types
-    long num;
-    char *err;
-    char *sym;
-    char *str;
+
+    union {
+        long num;
+        char *err;
+        char *sym;
+        char *str;
+        lbuiltin builtin;
+    };
 
     // Func
-    lbuiltin builtin;
     lenv* env;
     lval *formals;
     lval *body;
