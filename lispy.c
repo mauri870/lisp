@@ -304,11 +304,25 @@ lval *lval_read(mpc_ast_t *t) {
 }
 
 lval *lval_join(lval *x, lval *y) {
-    while (y->count) {
-        x = lval_add(x, lval_pop(y, 0));
+    if (x->type == LVAL_STR && y->type == LVAL_STR) {
+        x = lval_join_str(x, y);
+    }
+
+    if (x->type == LVAL_QEXPR && y->type == LVAL_QEXPR) {
+        while (y->count) {
+            x = lval_add(x, lval_pop(y, 0));
+        }
     }
 
     lval_del(y);
+    return x;
+}
+
+lval *lval_join_str(lval *x, lval *y) {
+    const size_t xlen = strlen(x->str);
+    const size_t ylen = strlen(y->str) + 1;
+    x->str = realloc(x->str, xlen + ylen);
+    memcpy(x->str + xlen, y->str, ylen);
     return x;
 }
 
@@ -507,7 +521,10 @@ lval *lval_builtin_eval(lenv *e, lval *a) {
 
 lval *lval_builtin_join(lenv *e, lval *a) {
     for (int i = 0; i < a->count; i++) {
-        LASSERT(a, a->cell[i]->type == LVAL_QEXPR, "Function 'join' passed incorrect type!");
+        LASSERT(a, (a->cell[i]->type == LVAL_QEXPR || a->cell[i]->type == LVAL_STR), 
+            "Function 'join' passed incorrect type!");
+        LASSERT(a, a->cell[i]->type == a->cell[0]->type,
+            "Function 'join' require all parameters to be the same type!");
     }
 
     lval *x = lval_pop(a, 0);

@@ -93,6 +93,7 @@ lval *lval_add(lval *v, lval *x);
 lval *lval_read(mpc_ast_t *t);
 lval *lval_pop(lval *v, int i);
 lval *lval_join(lval *x, lval *y);
+lval *lval_join_str(lval *x, lval *y);
 void lval_print(lval *v);
 void lval_print_str(lval *);
 lval *lval_copy(lval *v);
