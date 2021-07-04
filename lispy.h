@@ -50,7 +50,7 @@ struct lval {
     int type;
 
     union {
-        long num;
+        double num;
         char *err;
         char *sym;
         char *str;
@@ -76,7 +76,7 @@ void lenv_add_builtins(lenv *e);
 lenv *lenv_copy(lenv *);
 void lenv_def(lenv *, lval *k, lval *v);
 
-lval *lval_num(long x);
+lval *lval_num(double x);
 lval *lval_err(char *fmt, ...);
 lval *lval_sym(char *s);
 lval *lval_sexpr(void);

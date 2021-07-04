@@ -140,7 +140,7 @@ void lenv_def(lenv *e, lval *k, lval *v) {
     lenv_put(e, k, v);
 }
 
-lval *lval_num(long x) {
+lval *lval_num(double x) {
     lval *v = malloc(sizeof(lval));
     v->type = LVAL_NUM;
     v->num = x;
@@ -256,7 +256,8 @@ void lval_del(lval *v) {
 
 lval *lval_read_num(mpc_ast_t *t) {
     errno = 0;
-    long x = strtol(t->contents, NULL, 10);
+    double x;
+    sscanf(t->contents, "%lf", &x);
     return errno != ERANGE ? lval_num(x) : lval_err("invalid number");
 }
 
@@ -313,7 +314,15 @@ lval *lval_join(lval *x, lval *y) {
 
 void lval_print(lval *v) {
     switch (v->type) {
-        case LVAL_NUM: printf("%li", v->num); break;
+        case LVAL_NUM: {
+            float n = ceilf(v->num);
+            if (n == v->num) {
+                printf("%li", (long) n);
+            } else {
+                printf("%lf", v->num); 
+            }
+            break;
+        }
         case LVAL_ERR: printf("Error: %s", v->err); break;
         case LVAL_SYM: printf("%s", v->sym); break;
         case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
@@ -447,7 +456,7 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
             }
             x->num /= y->num;
         }
-        if (strcmp(op, "%") == 0) { x->num %= y->num; }
+        if (strcmp(op, "%") == 0) { x->num = fmod(x->num, y->num); }
         if (strcmp(op, "^") == 0) { x->num = pow(x->num, y->num); }
         lval_del(y);
     }
