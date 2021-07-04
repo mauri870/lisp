@@ -126,13 +126,14 @@
 ; Test
 
 (fun {assert got expected} {
-  if (== got expected) { "OK!" } { "FAIL!" }
+  (== got expected)
 })
 
 (fun {test msg got expected} {
   (do
-    (print
-      (join (assert got expected)
+    (show 
+      (join
+        (if (assert got expected) { "OK!" } { "FAIL!" })
         " "
         msg)))
 })

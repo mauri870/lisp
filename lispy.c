@@ -91,6 +91,7 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "fun", lval_builtin_fun);
     lenv_add_builtin(e, "load", lval_builtin_load);
     lenv_add_builtin(e, "print", lval_builtin_print);
+    lenv_add_builtin(e, "show", lval_builtin_show);
     lenv_add_builtin(e, "error", lval_builtin_error);
 
     // arithmetic functions
@@ -353,6 +354,13 @@ void lval_print(lval *v) {
                 putchar(')');
             }
             break;
+    }
+}
+
+void lval_show(lval *v) {
+    switch (v->type) {
+        case LVAL_STR: printf("%s", v->str); break;
+        default: lval_print(v);
     }
 }
 
@@ -675,6 +683,17 @@ lval *lval_builtin_load(lenv *e, lval *a) {
 lval *lval_builtin_print(lenv *e, lval *a) {
     for (int i = 0; i < a->count; i++) {
         lval_print(a->cell[i]);
+        putchar(' ');
+    }
+
+    putchar('\n');
+    lval_del(a);
+    return lval_sexpr();
+}
+
+lval *lval_builtin_show(lenv *e, lval *a) {
+    for (int i = 0; i < a->count; i++) {
+        lval_show(a->cell[i]);
         putchar(' ');
     }
 
