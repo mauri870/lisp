@@ -91,6 +91,11 @@
     {foldl f (f z (fst l)) (tail l)}
 })
 
+; Element on List, based on foldl
+; (fun {elem x l} {
+;   foldl (\ {acc v} { if (== acc 1) {acc} {== x v} }) 0 l
+; })
+
 ; Len of list
 ; We already have a len builtin tho
 ; (fun {len l} {foldl (\ {acc _} {+ acc 1}) 0 l })
