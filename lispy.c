@@ -319,7 +319,7 @@ void lval_print(lval *v) {
             if (n == v->num) {
                 printf("%li", (long) n);
             } else {
-                printf("%lf", v->num); 
+                printf("%lf", v->num);
             }
             break;
         }

@@ -91,6 +91,10 @@
     {foldl f (f z (fst l)) (tail l)}
 })
 
+; Len of list
+; We already have a len builtin tho
+; (fun {len l} {foldl (\ {acc _} {+ acc 1}) 0 l })
+
 ; Sum / product
 (fun {sum l} {foldl + 0 l})
 (fun {product l} {foldl * 1 l})
