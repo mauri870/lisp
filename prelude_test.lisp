@@ -1,0 +1,1 @@
+(test "join str with str" (join "abc" "123") "abc123")

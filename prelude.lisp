@@ -3,6 +3,8 @@
 (def {false} 0)
 (def {true} 1)
 
+(def {ok} ())
+
 ; List functions
 (fun {unpack f l} {
     eval (join (list f) l)
@@ -24,7 +26,7 @@
 
 ; Open new scope
 (fun {let b} {
-  ((\ {_} b) ())
+  ((\ {_} b) ok)
 })
 
 (fun {flip f a b} {f b a})
@@ -119,4 +121,18 @@
     {error "No Case Found"}
     {if (== x (fst (fst cs))) {snd (fst cs)} {
       unpack case (join (list x) (tail cs))}}
+})
+
+; Test
+
+(fun {assert got expected} {
+  if (== got expected) { "OK!" } { "FAIL!" }
+})
+
+(fun {test msg got expected} {
+  (do
+    (print
+      (join (assert got expected)
+        " "
+        msg)))
 })
