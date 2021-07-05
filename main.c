@@ -65,12 +65,17 @@ int main(int argc, char **argv) {
     }
 
     if (argc >= 2) {
-        for (int i = 1; i < argc; i++) {
-            lval *args = lval_add(lval_sexpr(), lval_str(argv[i]));
-            lval *x = lval_builtin_load(e, args);
+        if (strcmp(argv[1], "test") == 0) {
+            // load prelude tests
+            lenv_load_file(e, "./prelude_test.lisp");
+        } else {
+            for (int i = 1; i < argc; i++) {
+                lval *args = lval_add(lval_sexpr(), lval_str(argv[i]));
+                lval *x = lval_builtin_load(e, args);
 
-            if (x->type == LVAL_ERR) { lval_println(x); }
-            lval_del(x);
+                if (x->type == LVAL_ERR) { lval_println(x); }
+                lval_del(x);
+            }
         }
     }
 
