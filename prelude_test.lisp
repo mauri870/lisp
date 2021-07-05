@@ -1,5 +1,14 @@
 (show "Prelude Test Cases")
 
+; atoms
+(test "atoms nil" nil {})
+(test "atoms false" false 0)
+(test "atoms true" true 1)
+(test "atoms ok" ok ())
+
+; lambda
+(test "lambda" ((lambda {x} {^ x 2}) 4) 16)
+
 ; join
 (test "join string with string" (join "abc" "123") "abc123")
 

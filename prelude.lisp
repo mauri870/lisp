@@ -5,6 +5,8 @@
 
 (def {ok} ())
 
+(def {lambda} \)
+
 ; List functions
 (fun {unpack f l} {
     eval (join (list f) l)
