@@ -34,10 +34,7 @@ int main(int argc, char **argv) {
     lenv_add_builtins(e);
 
     // prelude
-    lval *args = lval_add(lval_sexpr(), lval_str("./prelude.lisp"));
-    lval *x = lval_builtin_load(e, args);
-    if (x->type == LVAL_ERR) { lval_println(x); }
-    lval_del(x);
+    lenv_load_file(e, "./prelude.lisp");
 
     // REPL
     if (argc == 1) {

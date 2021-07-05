@@ -75,6 +75,7 @@ void lenv_add_builtin(lenv *e, char *name, lbuiltin fun);
 void lenv_add_builtins(lenv *e);
 lenv *lenv_copy(lenv *);
 void lenv_def(lenv *, lval *k, lval *v);
+void lenv_load_file(lenv *, char *);
 
 lval *lval_num(double x);
 lval *lval_err(char *fmt, ...);

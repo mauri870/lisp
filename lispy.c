@@ -141,6 +141,13 @@ void lenv_def(lenv *e, lval *k, lval *v) {
     lenv_put(e, k, v);
 }
 
+void lenv_load_file(lenv *e, char *fname) {
+    lval *args = lval_add(lval_sexpr(), lval_str(fname));
+    lval *x = lval_builtin_load(e, args);
+    if (x->type == LVAL_ERR) { lval_println(x); }
+    lval_del(x);
+}
+
 lval *lval_num(double x) {
     lval *v = malloc(sizeof(lval));
     v->type = LVAL_NUM;
