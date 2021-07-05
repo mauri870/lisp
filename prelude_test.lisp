@@ -39,6 +39,6 @@
 (test "join more than two lists" (join "" "") "")
 
 ; sqrt
-(test "sqrt of number" (sqrt 3.14) 1.772005)
+(test "sqrt of number" (sqrt 3.14) 1.772004514666935)
 
 (show "End of Prelude Test Cases")

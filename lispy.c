@@ -762,7 +762,7 @@ int lval_eq(lval *x, lval *y) {
     if (x->type != y->type) { return 0;}
 
     switch (x->type) {
-        case LVAL_NUM: return (fabs(x->num - y->num) < 0.00001);
+        case LVAL_NUM: return (fabs(x->num - y->num) < __DBL_EPSILON__);
         case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
         case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
         case LVAL_STR: return (strcmp(x->str, y->str) == 0);
