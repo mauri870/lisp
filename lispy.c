@@ -834,9 +834,15 @@ lval *lval_builtin_fun(lenv *e, lval *a) {
 
 lval *lval_builtin_len(lenv *e, lval *a) {
     LASSERT(a, a->count == 1, "Function 'len' only accepts one parameter!");
-    LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'len' passed incorrect type!");
+    LASSERT(a, (a->cell[0]->type == LVAL_QEXPR || a->cell[0]->type == LVAL_STR), "Function 'len' passed incorrect type!");
 
-    lval *x = lval_num(a->cell[0]->count);
+    int count = 0;
+    switch (a->cell[0]->type) {
+        case LVAL_STR: count = strlen(a->cell[0]->str); break;
+        case LVAL_QEXPR: count = a->cell[0]->count; break;
+    }
+
+    lval *x = lval_num(count);
     return x;
 }
 
