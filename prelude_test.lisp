@@ -20,3 +20,13 @@
 (test "tail of empty string" (tail "") "")
 (test "tail of list" (tail {1 2 3 4}) {2 3 4})
 (test "tail of empty list" (tail {}) {})
+
+; join
+(test "join lists" (join {1 2} {3 4}) {1 2 3 4})
+(test "join empty lists" (join {} {1 2}) {1 2})
+(test "join strings" (join "ab" "cd") "abcd")
+(test "join empty strings" (join "" "") "")
+(test "join more than two strings" (join "a" "b" "c" "d") "abcd")
+(test "join more than two lists" (join "" "") "")
+
+(show "End of Prelude Test Cases")
