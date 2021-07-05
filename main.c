@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
 
     // prelude
     lenv_load_file(e, "./prelude.lisp");
+    lenv_load_file(e, "./prelude_test.lisp");
 
     // REPL
     if (argc == 1) {
