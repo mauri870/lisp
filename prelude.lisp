@@ -4,8 +4,9 @@
 (def {true} 1)
 
 (def {ok} ())
-
 (def {lambda} \)
+
+(def {PI} 3.14159265358979323846)
 
 ; List functions
 (fun {unpack f l} {

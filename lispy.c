@@ -338,11 +338,12 @@ lval *lval_join_str(lval *x, lval *y) {
 void lval_print(lval *v) {
     switch (v->type) {
         case LVAL_NUM: {
-            float n = ceilf(v->num);
+            double n;
+            modf(v->num, &n);
             if (n == v->num) {
                 printf("%li", (long) n);
             } else {
-                printf("%lf", v->num);
+                printf("%.15g", v->num);
             }
             break;
         }
