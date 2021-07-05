@@ -111,6 +111,7 @@ lval *lval_builtin_mul(lenv *, lval *a);
 lval *lval_builtin_div(lenv *, lval *a);
 lval *lval_builtin_mod(lenv *, lval *a);
 lval *lval_builtin_exp(lenv *, lval *a);
+lval *lval_builtin_sqrt(lenv *, lval *);
 lval *lval_builtin_head(lenv *, lval* a);
 lval *lval_builtin_tail(lenv *, lval *);
 lval *lval_builtin_list(lenv *, lval *);

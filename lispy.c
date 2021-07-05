@@ -101,6 +101,7 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "/", lval_builtin_div);
     lenv_add_builtin(e, "%", lval_builtin_mod);
     lenv_add_builtin(e, "^", lval_builtin_exp);
+    lenv_add_builtin(e, "sqrt", lval_builtin_sqrt);
 
     // conditional functions
     lenv_add_builtin(e, ">", lval_builtin_gt);
@@ -465,8 +466,10 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
     lval *x = lval_pop(a, 0);
 
     // if no args and sub then perform unary negation
-    if ((strcmp(op, "-") == 0) && a->count == 0) {
-        x->num = -x->num;
+    if (a->count == 0) {
+        if ((strcmp(op, "-") == 0)) { x->num = -x->num; }
+
+        if (strcmp(op, "sqrt") == 0) { x->num = sqrt(x->num); }
     }
 
     // loop remaining elements
@@ -918,6 +921,11 @@ lval *lval_builtin_mod(lenv *e, lval *a) {
 
 lval *lval_builtin_exp(lenv *e, lval *a) {
     return lval_builtin_op(e, a, "^");
+}
+
+lval *lval_builtin_sqrt(lenv *e, lval *a) {
+    LASSERT_NUM("sqrt", a, 1);
+    return lval_builtin_op(e, a, "sqrt");
 }
 
 lval *lval_eval_sexpr(lenv *e, lval *v) {

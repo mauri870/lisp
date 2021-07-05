@@ -38,4 +38,7 @@
 (test "join more than two strings" (join "a" "b" "c" "d") "abcd")
 (test "join more than two lists" (join "" "") "")
 
+; sqrt
+(test "sqrt of number" (sqrt 3.14) 1.772005)
+
 (show "End of Prelude Test Cases")
