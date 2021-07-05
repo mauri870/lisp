@@ -496,27 +496,47 @@ lval *lval_builtin_op(lenv *e, lval* a, char *op) {
 
 lval* lval_builtin_head(lenv *e, lval* a) {
     LASSERT_NUM("head", a, 1);
-    LASSERT_TYPE("head", a, 0, LVAL_QEXPR);
-    LASSERT_NOT_EMPTY("head", a, 0);
+    LASSERT(a, (a->cell[0]->type == LVAL_QEXPR || a->cell[0]->type == LVAL_STR),
+        "Function 'head' passed incorrect type!");
 
     // otherwise take first argument
     lval* v = lval_take(a, 0);
 
-    // delete all elements that are not head and return
-    while (v->count > 1) { lval_del(lval_pop(v, 1)); }
+    if (v->type == LVAL_STR) {
+        if (strcmp(v->str, "") != 0) {
+            v->str[1] = '\0';
+        }
+    }
+
+    if (v->type == LVAL_QEXPR) {
+        // delete all elements that are not head and return
+        while (v->count > 1) { lval_del(lval_pop(v, 1)); }
+    }
+
     return v;
 }
 
 lval* lval_builtin_tail(lenv *e, lval* a) {
     LASSERT_NUM("tail", a, 1);
-    LASSERT_TYPE("tail", a, 0, LVAL_QEXPR);
-    LASSERT_NOT_EMPTY("tail", a, 0);
+    LASSERT(a, (a->cell[0]->type == LVAL_QEXPR || a->cell[0]->type == LVAL_STR),
+        "Function 'tail' passed incorrect type!");
 
     // take first argument
     lval* v = lval_take(a, 0);
 
-    // delete first element and return
-    lval_del(lval_pop(v, 0));
+    if (v->type == LVAL_STR) {
+        if (strcmp(v->str, "") != 0) {
+            memmove(v->str, v->str + 1, strlen(v->str));
+        }
+    }
+
+    if (v->type == LVAL_QEXPR) {
+        if (v->count > 0) {
+            // delete first element and return
+            lval_del(lval_pop(v, 0));
+        }
+    }
+
     return v;
 }
 
