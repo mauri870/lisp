@@ -973,6 +973,11 @@ lval *lval_eval(lenv *e, lval *v) {
 }
 
 lval *lval_call(lenv *e, lval *f, lval *a) {
+    if (f->type != LVAL_FUN) { 
+        lval_del(a);
+        return lval_err("Not a function!");
+    }
+
     // if builtin simply call that
     if (f->builtin) { return f->builtin(e, a); }
 
